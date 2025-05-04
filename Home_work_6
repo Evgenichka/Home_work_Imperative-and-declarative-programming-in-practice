@@ -1,0 +1,26 @@
+
+#Реализация программы на Python в процедурной парадигме программирования для решения поставленной задачи — бинарного поиска в отсортированном массиве целых чисел.
+
+
+def binary_search(arr, target):
+    left = 0
+    right = len(arr) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        
+        if arr[mid] == target:
+            return mid   # Нашли элемент, возвращаем его индекс
+        elif arr[mid] < target:
+            left = mid + 1  # Ищем справа от середины
+        else:
+            right = mid - 1  # Ищем слева от середины
+            
+    return -1  # Элемент не найден
+
+
+# Пример использования
+arr = [1, 3, 5, 7, 9]
+target = 5
+result = binary_search(arr, target)
+print(f'Индекс числа {target}:', result)
