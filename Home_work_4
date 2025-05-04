@@ -1,0 +1,25 @@
+# Корреляция Пирсона
+# Вычисление корреляции Пирсона функциональным способом
+
+import numpy as np
+
+# Определение функций для среднего значения и стандартного отклонения
+mean = lambda arr: sum(arr)/len(arr)
+std_dev = lambda arr: np.sqrt(sum((xi - mean(arr))**2 for xi in arr)/(len(arr)-1))
+
+def pearson_correlation(x, y):
+    # Среднее значение каждого массива
+    x_mean = mean(x)
+    y_mean = mean(y)
+    
+    # Вычисляем числитель и знаменатель формулы корреляции
+    numerator = sum((xi-x_mean)*(yi-y_mean) for xi,yi in zip(x,y))
+    denominator = std_dev(x)*std_dev(y)*len(x)
+    
+    return numerator / denominator if denominator != 0 else None
+
+# Пример использования
+if __name__ == "__main__":
+    X = [1, 2, 3, 4]
+    Y = [2, 3, 4, 5]
+    print("Коэффициент корреляции:", pearson_correlation(X,Y))
