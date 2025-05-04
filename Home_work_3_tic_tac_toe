@@ -1,0 +1,96 @@
+# Реализация игры "Крестики-нолики" с применением объектно-ориентированного подхода
+# Класс Player - игрок ('X' или 'O'). Метод make_move() запрашивает от игрока координаты следующего хода и проверяет допустимость хода перед размещением фигуры на доске.
+# Класс GameBoard - хранит состояние игровой доски, реализует методы для отображения доски, проверки валидных ходов, размещения фигур и определения победителя.
+# Класс TicTacToeGame - Управляет ходом игры: переключает игроков, запускает цикл игры и выводит сообщение о победе или ничьей.
+
+
+
+class Player:                                                                                
+    def __init__(self, symbol):
+        self.symbol = symbol
+
+    def make_move(self, game):
+        valid_input = False
+        while not valid_input:
+            try:
+                position = input(f"{self.symbol}'s turn. Enter coordinates (row column): ")
+                row, col = map(int, position.split())
+                if game.is_valid_move(row, col):
+                    game.make_move(row, col, self.symbol)
+                    valid_input = True
+                else:
+                    print("Invalid move. Try again.")
+            except ValueError:
+                print("Please enter two numbers separated by a space.")
+
+class GameBoard:
+    def __init__(self):
+        self.board = [[' ']*3 for _ in range(3)]
+
+    def display(self):
+        for row in self.board:
+            print(' | '.join(row))
+            print('-'*9)
+
+    def is_valid_move(self, row, col):
+        return (
+            0 <= row < len(self.board) and
+            0 <= col < len(self.board[row]) and
+            self.board[row][col] == ' '
+        )
+
+    def make_move(self, row, col, symbol):
+        self.board[row][col] = symbol
+
+    def check_winner(self, symbol):
+        # Check rows
+        for row in self.board:
+            if all(cell == symbol for cell in row):
+                return True
+
+        # Check columns
+        for col in range(len(self.board)):
+            if all(self.board[row][col] == symbol for row in range(len(self.board))):
+                return True
+
+        # Check diagonals
+        if all(self.board[i][i] == symbol for i in range(len(self.board))) or \
+           all(self.board[i][len(self.board)-1-i] == symbol for i in range(len(self.board))):
+            return True
+
+        return False
+
+    def is_draw(self):
+        return all(cell != ' ' for row in self.board for cell in row)
+
+class TicTacToeGame:
+    def __init__(self):
+        self.game_board = GameBoard()
+        self.players = [Player('X'), Player('O')]
+        self.current_player_idx = 0
+
+    def switch_player(self):
+        self.current_player_idx = 1 - self.current_player_idx
+
+    def start_game(self):
+        print("Welcome to Tic-Tac-Toe!")
+        while True:
+            self.game_board.display()
+            current_player = self.players[self.current_player_idx]
+            current_player.make_move(self.game_board)
+
+            if self.game_board.check_winner(current_player.symbol):
+                self.game_board.display()
+                print(f"Congratulations! {current_player.symbol} wins!")
+                break
+
+            if self.game_board.is_draw():
+                self.game_board.display()
+                print("It's a draw!")
+                break
+
+            self.switch_player()
+
+# Запускаем игру
+game = TicTacToeGame()
+game.start_game()
